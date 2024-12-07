@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: final
+data:
+  image_name: "drops.jpg"
+  app_name: "flask-app"
+  group_name: "GROUP10"
