@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app-deployment
+  namespace: final
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+        - name: flask-app
+          image: 503015272051.dkr.ecr.us-east-1.amazonaws.com/my_app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 81
+          env:
+            - name: DBHOST
+              value: "mysql-service"
+            - name: DBUSER
+              value: "root"
+            - name: DBPWD
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secret
+                  key: DB_PASSWORD
+            - name: DATABASE
+              value: "employees"
+            - name: DBPORT
+              value: "3306"
+            - name: IMAGE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config 
+                  key: image_name
+            - name: GROUP_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config 
+                  key: group_name
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secret
+                  key: AWS_ACCESS_KEY_ID 
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secret 
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_SESSION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secret 
+                  key: AWS_SESSION_TOKEN
+          resources:
+            requests:
+              cpu: "0.5"
+            limits:
+              cpu: "0.5"
